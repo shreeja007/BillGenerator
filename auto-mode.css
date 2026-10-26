@@ -1,0 +1,51 @@
+/* Sample identification stays on invoice paper, in print, and in exported snapshots. */
+.service-page { position: relative; }
+[data-document-kind="sample"] .bill-page::before,
+[data-document-kind="sample"] .service-page::before {
+  content: 'SAMPLE'; position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%) rotate(-24deg);
+  color: rgba(120, 65, 35, .15); font: 700 62px/1 Arial, sans-serif; letter-spacing: 7px;
+  z-index: 2; pointer-events: none; white-space: nowrap;
+}
+.sample-notice {
+  position: absolute; top: 2mm; right: 5mm; z-index: 3; padding: 3px 7px;
+  border: 1px solid #9d714a; background: #fff1d9; color: #714622; font: 700 9px/1.3 Arial, sans-serif;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+@media screen {
+  .entry-mode-switch { display: flex; padding: 3px; border: 1px solid #d5dbce; border-radius: 6px; gap: 3px; }
+  .entry-mode-switch button { background: transparent; border: 0; border-radius: 4px; padding: 7px 10px; font-size: 10px; color: #7b8b70; cursor: pointer; }
+  .entry-mode-switch button[aria-pressed="true"] { background: #31533d; color: #fffbea; }
+  .billbook[data-entry-mode="auto"] .control-panel > :not(.auto-entry):not(.bill-identity) { display: none; }
+  .billbook[data-entry-mode="auto"] #workspaceExports { display: none; }
+  .billbook[data-entry-mode="full"] .auto-entry { display: none; }
+  .auto-entry { background: #fffefa; border: 1px solid #dce3d2; border-radius: 9px; padding: 20px; }
+  .auto-entry h2 { font: 500 27px/1.1 'Newsreader', Georgia, serif; margin-bottom: 9px; letter-spacing: -.6px; }
+  .auto-intro { font-size: 10px; line-height: 1.7; color: #8b977e; margin-bottom: 20px; }
+  .auto-entry label { display: block; font-size: 11px; color: #77876a; margin-bottom: 13px; }
+  .auto-entry input, .auto-entry select { display: block; width: 100%; margin-top: 6px; padding: 10px; font: inherit; font-size: 13px; color: #304c32; background: #fffefa; border: 1px solid #dce3d2; border-radius: 5px; }
+  .auto-entry input:focus, .auto-entry select:focus { outline: 2px solid #9fb78e; outline-offset: 1px; }
+  .auto-entry small { display: block; font-size: 9px; line-height: 1.7; color: #95a086; margin-top: 6px; }
+  .auto-entry-mode { display: flex; align-items: center; gap: 8px; background: #f0f2e8; padding: 12px; border-radius: 6px; margin-bottom: 18px; }
+  .auto-entry-mode label { flex: 1; margin: 0; }
+  .auto-output-note { margin: -5px 0 17px; font-size: 10px; color: #9c784e; line-height: 1.6; }
+  .auto-entry-actions { display: flex; gap: 8px; margin-top: 20px; }
+  .auto-entry-actions > button { flex: 1; }
+  .auto-entry-error { color: #9f553d; font-size: 11px; line-height: 1.6; margin-top: 13px; }
+  .auto-entry-result { font-size: 11px; color: #567446; padding-top: 12px; line-height: 1.6; }
+  .auto-product { border: 1px solid #e1e6d8; background: #fafbf5; border-radius: 6px; padding: 12px; margin-bottom: 12px; }
+  .auto-product-top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
+  .auto-product-top strong { font-size: 10px; color: #7a8e69; }
+  .auto-product-numbers { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+  .auto-product label:last-child { margin-bottom: 0; }
+  .auto-entry-secondary { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+  .auto-options { margin: 12px 0; }
+  .auto-options summary { font-size: 10px; color: #849675; cursor: pointer; }
+  .auto-options label { margin-top: 10px; }
+  .auto-date-ad { margin-top: -6px !important; margin-bottom: 15px; }
+  @media (max-width: 760px) {
+    .entry-mode-switch button { padding: 7px 8px; font-size: 9px; }
+    .auto-entry input, .auto-entry select { font-size: 16px; }
+    .workspace-top-actions { gap: 6px; }
+    .save-status { display: none; }
+  }
+}

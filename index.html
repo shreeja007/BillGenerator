@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billbook — Petrol & Service Bills</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="bill-navigation.css">
+  <link rel="stylesheet" href="service.css">
+  <link rel="stylesheet" href="workspace.css">
+  <link rel="stylesheet" href="auto-mode.css">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Noto+Sans+Devanagari:wght@500;700&family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style id="dynamicPrintPageStyle"></style>
+</head>
+<body>
+  <div class="app-layout" id="fuelWorkspace" data-workspace="fuel">
+    <!-- Sidebar Control Panel -->
+    <aside class="control-panel no-print">
+      <nav class="bill-nav" aria-label="Bill type">
+        <a href="index.html" aria-current="page">Petrol Bill</a>
+        <a href="service.html">Service Bill</a>
+      </nav>
+      <div class="panel-header">
+        <h2>⛽ Fuel Bill Controls</h2>
+        <p class="subtitle">Switch templates, edit values, or type directly into the bill.</p>
+      </div>
+
+      <!-- Action / Download Buttons Top -->
+      <div class="action-buttons-top">
+        <button type="button" class="btn-primary btn-download" id="btnDownloadPdf">
+          📥 Download PDF (A4 Landscape)
+        </button>
+        <button type="button" class="btn-primary" id="btnPrint">
+          🖨️ Print (Ctrl + P)
+        </button>
+      </div>
+
+      <p id="appStatus" class="app-status" role="status" aria-live="polite" hidden></p>
+
+      <!-- Template Format Selector -->
+      <div class="control-group highlight-box-accent">
+        <h3>🧾 Bill Format / Template</h3>
+        <div class="input-field">
+          <label for="templateSelect">Select Template Style</label>
+          <select id="templateSelect">
+            <option value="himal">Format 1: Himal Enterprises (Checkpost Pink Slip)</option>
+            <option value="banglamukhi">Format 2: Banglamukhi Oil Store (Sanobhadyang ERP)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group highlight-box">
+        <h3>📄 Print & Page Layout</h3>
+        <div class="layout-switch">
+          <label class="radio-card">
+            <input type="radio" name="printLayout" value="landscape-2up" checked>
+            <div class="radio-card-content">
+              <strong>🖨️ 2 Bills / A4 Landscape</strong>
+              <small>Two side-by-side bills on 1 A4 sheet</small>
+            </div>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="printLayout" value="single-portrait">
+            <div class="radio-card-content">
+              <strong>📄 Single Bill (Portrait)</strong>
+              <small>One large bill per page</small>
+            </div>
+          </label>
+        </div>
+
+        <div class="input-field mt-2">
+          <label for="copyLabelMode">Copy Sub-title Tags</label>
+          <select id="copyLabelMode">
+            <option value="none">None (Identical Original Bills)</option>
+            <option value="copies">Customer Copy & Office Copy</option>
+            <option value="custom">Original & Duplicate</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <h3>⚡ Quick Fuel Rate & Calculation</h3>
+        
+        <div class="input-field">
+          <label for="fuelType">Fuel Type</label>
+          <select id="fuelType">
+            <option value="Petrol" data-hscode="2710.12.10" data-rate="200.00">Petrol (HS: 2710.12.10)</option>
+            <option value="Diesel" data-hscode="2710.19.10" data-rate="165.00">Diesel (HS: 2710.19.10)</option>
+            <option value="Auto LPG" data-hscode="2711.12.00" data-rate="140.00">Auto LPG (HS: 2711.12.00)</option>
+            <option value="Custom" data-hscode="" data-rate="">Custom Fuel</option>
+          </select>
+        </div>
+
+        <div class="input-field">
+          <label for="retailRate">Retail Pump Rate (NPR / Ltr incl. 13% VAT)</label>
+          <div class="input-with-prefix">
+            <span>Rs.</span>
+            <input type="number" id="retailRate" min="0.01" max="1000000" step="0.01" value="200.00" placeholder="e.g. 200.00">
+          </div>
+          <small class="help-text">Base rate before 13% VAT: <strong id="calculatedBaseRate">176.9911</strong></small>
+        </div>
+
+        <div class="calc-mode-switch">
+          <label><input type="radio" name="calcMode" value="qty" checked> By Quantity (Ltrs)</label>
+          <label><input type="radio" name="calcMode" value="amount"> By Total Amount (Rs.)</label>
+        </div>
+
+        <div class="input-field" id="qtyFieldGroup">
+          <label for="inputQty">Quantity (Liters)</label>
+          <input type="number" id="inputQty" min="0" max="1000000" step="0.001" value="10.000" placeholder="10.000">
+        </div>
+
+        <div class="input-field hidden" id="amountFieldGroup">
+          <label for="inputTotalAmount">Target Total Amount (NPR)</label>
+          <div class="input-with-prefix">
+            <span>Rs.</span>
+            <input type="number" id="inputTotalAmount" min="0" max="999999999.99" step="0.01" value="2000.00" placeholder="2000.00">
+          </div>
+        </div>
+
+        <div class="input-field">
+          <label for="inputDiscount">Discount before VAT (NPR)</label>
+          <input type="number" id="inputDiscount" min="0" max="999999999.99" step="0.01" value="0.00">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <h3>📋 Invoice & Buyer Info</h3>
+        <div class="input-field">
+          <label for="invNumber">Invoice No.</label>
+          <input type="text" id="invNumber" value="848">
+        </div>
+        <div class="input-field">
+          <label for="buyerName">Buyer / Customer Name (M/S)</label>
+          <input type="text" id="buyerName" value="CASH( C. G. Communications Ltd.)">
+        </div>
+        <div class="input-field">
+          <label for="buyerPan">Buyer PAN No.</label>
+          <input type="text" id="buyerPan" value="301512183">
+        </div>
+        <div class="input-field">
+          <label for="buyerAddress">Buyer Address</label>
+          <input type="text" id="buyerAddress" value="" placeholder="e.g. Thapathali, Kathmandu">
+        </div>
+        <div class="input-field">
+          <label for="buyerMobile">Buyer Phone No.</label>
+          <input type="text" id="buyerMobile" placeholder="e.g. 9707051000">
+        </div>
+        <div class="input-field">
+          <label for="vehicleNo">Vehicle / Transport No.</label>
+          <input type="text" id="vehicleNo" placeholder="e.g. BA 2 PA 1234">
+        </div>
+        <div class="input-field format2-only">
+          <label for="paymentMode">Payment Mode</label>
+          <input type="text" id="paymentMode" value="cash" placeholder="e.g. cash">
+        </div>
+        <div class="input-field format2-only">
+          <label for="dueDate">Due Date</label>
+          <input type="text" id="dueDate" value="0 Days" placeholder="e.g. 0 Days">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <h3>📅 Dates & Station Details</h3>
+        <div class="input-field">
+          <label for="invoiceDate">Invoice Date (AD)</label>
+          <input type="date" id="invoiceDate" min="1943-04-14" max="2034-04-13" aria-describedby="dateConversionHelp dateConversionError">
+        </div>
+        <div class="input-field">
+          <label for="invoiceMiti">Nepali Miti (BS)</label>
+          <input type="text" id="invoiceMiti" value="2083/04/23" placeholder="YYYY/MM/DD" aria-describedby="dateConversionHelp dateConversionError" autocomplete="off">
+          <small class="help-text" id="dateConversionHelp">AD ↔ BS auto-converts as you edit either date. BS: YYYY/MM/DD; optional HH:mm.</small>
+          <small class="help-text date-error" id="dateConversionError" role="status" aria-live="polite" hidden></small>
+        </div>
+        <div class="input-field">
+          <label for="invoiceTime">Generated Timestamp</label>
+          <input type="text" id="invoiceTime" value="2026-08-08 13:47:44">
+        </div>
+        <div class="input-field">
+          <label for="stationName">Station Name</label>
+          <input type="text" id="stationName" value="HIMAL ENTERPRISES">
+        </div>
+        <div class="input-field">
+          <label for="stationAddress">Station Address</label>
+          <input type="text" id="stationAddress" value="CHA.NA. PA-06, CHECKPOST, KATHMANDU">
+        </div>
+        <div class="input-field">
+          <label for="stationPhone">Station Phone</label>
+          <input type="text" id="stationPhone" value="">
+        </div>
+        <div class="input-field">
+          <label for="stationEmail">Email</label>
+          <input type="text" id="stationEmail" value="himalenterprises2021@gmail.com">
+        </div>
+        <div class="input-field">
+          <label for="stationPan">Station PAN/VAT No.</label>
+          <input type="text" id="stationPan" value="500011548">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <h3>🎨 Paper Appearance</h3>
+        <div class="theme-buttons">
+          <button type="button" class="btn-theme active" id="btnPinkTheme">🌸 Authentic Pink Paper</button>
+          <button type="button" class="btn-theme" id="btnWhiteTheme">📄 Standard White Paper</button>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button type="button" class="btn-secondary" id="btnReset">🔄 Reset Template Details</button>
+      </div>
+    </aside>
+
+    <!-- Preview Area -->
+    <main class="preview-area">
+      <div class="print-container landscape-mode format-himal" id="printSheet">
+        
+        <!-- ==================== BILL 1 (Left Copy) ==================== -->
+        <div class="bill-page pink-paper" id="billDocument1" data-bill-id="1">
+          <div class="copy-tag" id="copyTag1"></div>
+
+          <!-- ==================== FORMAT 1: HIMAL ENTERPRISES ==================== -->
+          <div class="template-view template-himal-view">
+            <header class="h-header">
+              <div class="h-logo-badge">
+                <div class="h-logo-box">
+                  <span class="h-np-text">हिमाल इन्टरप्राइजेज</span>
+                  <span class="h-np-sub">थानकोट, काठमाडौं</span>
+                </div>
+              </div>
+              <div class="h-header-details">
+                <h1 class="h-company-name" contenteditable="true" data-sync="stationName">HIMAL ENTERPRISES</h1>
+                <div class="h-company-address" contenteditable="true" data-sync="stationAddress">CHA.NA. PA-06, CHECKPOST, KATHMANDU</div>
+                <div class="h-company-contact">
+                  Phone No:- <span contenteditable="true" data-sync="stationPhone"></span> , Email :<span contenteditable="true" data-sync="stationEmail">himalenterprises2021@gmail.com</span>
+                </div>
+                <div class="h-company-pan">
+                  PAN/VAT No. : <strong contenteditable="true" data-sync="stationPan">500011548</strong>
+                </div>
+              </div>
+            </header>
+
+            <div class="h-tax-badge">Tax Invoice</div>
+
+            <section class="h-meta-grid">
+              <div class="h-meta-col h-meta-left">
+                <div class="h-meta-row"><span class="h-lbl">Invoice No. :</span> <span class="h-val" contenteditable="true" data-sync="invNo">848</span></div>
+                <div class="h-meta-row"><span class="h-lbl">Buyer :</span> <span class="h-val" contenteditable="true" data-sync="buyer">CASH( C. G. Communications Ltd.)</span></div>
+                <div class="h-meta-row"><span class="h-lbl">Pan No.:</span> <span class="h-val" contenteditable="true" data-sync="pan">301512183</span></div>
+                <div class="h-meta-row"><span class="h-lbl">Address :</span> <span class="h-val" contenteditable="true" data-sync="address"></span></div>
+                <div class="h-meta-row"><span class="h-lbl">Vehicle No.</span> <span class="h-val" contenteditable="true" data-sync="vehicle"></span></div>
+              </div>
+              <div class="h-meta-col h-meta-right">
+                <div class="h-meta-row"><span class="h-lbl">Invoice Date :</span> <span class="h-val" contenteditable="true" data-sync="date">08/08/2026</span></div>
+                <div class="h-meta-row"><span class="h-lbl">Invoice Miti :</span> <span class="h-val" contenteditable="true" data-sync="miti">2083/4/23</span></div>
+                <div class="h-meta-row"><span class="h-lbl">Buyer M.No. :</span> <span class="h-val" contenteditable="true" data-sync="buyerMobile"></span></div>
+              </div>
+            </section>
+
+            <!-- Table with continuous open vertical column lanes matching original photo -->
+            <div class="h-table-wrap">
+              <table class="h-table">
+                <thead>
+                  <tr>
+                    <th class="hc-sn">S.N.</th>
+                    <th class="hc-hscode">HSCode</th>
+                    <th class="hc-particulars">Particular's</th>
+                    <th class="hc-qty">Qty</th>
+                    <th class="hc-unit">Unit</th>
+                    <th class="hc-rate">Rate</th>
+                    <th class="hc-disc">Disc.</th>
+                    <th class="hc-amount">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="h-item-row">
+                    <td class="hc-sn">1</td>
+                    <td class="hc-hscode" contenteditable="true" data-sync="hscode">2710.12.10</td>
+                    <td class="hc-particulars" contenteditable="true" data-sync="particulars">Petrol</td>
+                    <td class="hc-qty" contenteditable="true" data-sync="qty">10.00</td>
+                    <td class="hc-unit" contenteditable="true" data-sync="unit">LTRS</td>
+                    <td class="hc-rate" contenteditable="true" data-sync="rate">176.9911</td>
+                    <td class="hc-disc" contenteditable="true" data-sync="disc">0</td>
+                    <td class="hc-amount" data-sync="itemAmount">1,769.91</td>
+                  </tr>
+                  <!-- Open vertical column space -->
+                  <tr class="h-open-row"><td colspan="8"><div class="h-spacer-box"></div></td></tr>
+                </tbody>
+                <tfoot>
+                  <tr class="h-total-row">
+                    <td colspan="3" class="h-total-lbl">Total</td>
+                    <td class="hc-qty" data-sync="totalQty">10.00</td>
+                    <td colspan="3"></td>
+                    <td class="hc-amount" data-sync="tableTotalAmount">1,769.91</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <section class="h-summary-section">
+              <div class="h-sum-left">
+                <div class="h-words-row">
+                  <span class="h-words-lbl">In Words :-</span>
+                  <span class="h-words-val" data-sync="inWords">NRS Two Thousand And Zero Only</span>
+                </div>
+                <div class="h-remarks-row">
+                  <span class="h-remarks-lbl">Remarks :-</span>
+                  <span class="h-remarks-val" contenteditable="true" data-sync="remarks"></span>
+                </div>
+              </div>
+              <div class="h-sum-right">
+                <div class="h-calc-row"><span>Basic Amount</span><span>:</span><span class="h-calc-val" data-sync="basicAmount">1,769.91</span></div>
+                <div class="h-calc-row"><span>Discount Amount</span><span>:</span><span class="h-calc-val" data-sync="discountAmount"></span></div>
+                <div class="h-calc-row"><span>Taxable Amount</span><span>:</span><span class="h-calc-val" data-sync="taxableAmount">1,769.91</span></div>
+                <div class="h-calc-row"><span>VAT 13%</span><span>:</span><span class="h-calc-val" data-sync="vatAmount">230.09</span></div>
+                <div class="h-calc-row h-net-row"><span>Net Amount</span><span>:</span><span class="h-calc-val" data-sync="netAmount">2,000.00</span></div>
+              </div>
+            </section>
+
+            <footer class="h-footer">
+              <div class="h-sig-left">
+                <div class="h-sig-line"></div>
+                <div class="h-sig-lbl">Customer Signature</div>
+                <div class="h-gen-time">Invoice Generated On:- <span contenteditable="true" data-sync="generatedTime">2026-08-08 13:47:44</span></div>
+              </div>
+              <div class="h-sig-right">
+                <div class="h-prepared-name" contenteditable="true" data-sync="preparedByName">Administrator Admin</div>
+                <div class="h-sig-line"></div>
+                <div class="h-sig-lbl">Prepared By</div>
+              </div>
+            </footer>
+          </div>
+
+          <!-- ==================== FORMAT 2: BANGLAMUKHI OIL STORE (ERP EXACT) ==================== -->
+          <div class="template-view template-banglamukhi-view">
+            <header class="b-header">
+              <h1 class="b-company-name" contenteditable="true" data-sync="stationName">BANGLAMUKHI OIL STORE PRIVATE LIMITED</h1>
+              <div class="b-address" contenteditable="true" data-sync="stationAddress">Sanobhadyang, Kathmandu</div>
+              <div class="b-contact">Phone No: <span contenteditable="true" data-sync="stationPhone">9745694481</span> ,</div>
+              <div class="b-email">Email: <span contenteditable="true" data-sync="stationEmail">Bangalamukhioilstore@gmail.com</span></div>
+            </header>
+
+            <!-- Top Left PAN with 9 Boxes -->
+            <div class="b-pan-row">
+              <div class="b-pan-container">
+                <span class="b-pan-label">PAN/ VAT No.</span>
+                <div class="b-pan-boxes" id="stationPanBoxes1"></div>
+              </div>
+            </div>
+
+            <div class="b-tax-title-box">
+              <span>Tax Invoice</span>
+            </div>
+
+            <!-- Boxed Meta Section -->
+            <div class="b-meta-box">
+              <div class="b-meta-top">
+                <div class="b-meta-col b-meta-col-left">
+                  <div class="b-row"><span class="b-lbl">M/S</span><span class="b-sep">:</span><strong class="b-val" contenteditable="true" data-sync="buyer">CG Communications</strong></div>
+                  <div class="b-row"><span class="b-lbl">Address</span><span class="b-sep">:</span><span class="b-val" contenteditable="true" data-sync="address">Thapathali, Kathmandu</span></div>
+                  <div class="b-row"><span class="b-lbl">Phone No.</span><span class="b-sep">:</span><span class="b-val" contenteditable="true" data-sync="buyerMobile">9707051000</span></div>
+                  <div class="b-row"><span class="b-lbl">PAN/VAT No.</span><span class="b-sep">:</span><strong class="b-val" contenteditable="true" data-sync="pan">301512183</strong></div>
+                </div>
+                <div class="b-meta-col b-meta-col-right">
+                  <div class="b-row"><span class="b-lbl">Invoice No.</span><span class="b-sep">:</span><span class="b-val" contenteditable="true" data-sync="invNo">TI681-MMX-83/84</span></div>
+                  <div class="b-row"><span class="b-lbl">Transaction Date</span><span class="b-sep">:</span><span class="b-val" contenteditable="true" data-sync="date">31/08/2026</span></div>
+                  <div class="b-row"><span class="b-lbl">Invoice Date</span><span class="b-sep">:</span><span class="b-val" contenteditable="true" data-sync="date">31/08/2026</span></div>
+                  <div class="b-row"><span class="b-lbl">Invoice Miti</span><span class="b-sep">:</span><span class="b-val" contenteditable="true" data-sync="miti">15/05/2083 09:41</span></div>
+                </div>
+              </div>
+              <div class="b-meta-bottom">
+                <div class="b-sub-item"><span>Transport :</span> <span contenteditable="true" data-sync="vehicle"></span></div>
+                <div class="b-sub-item"><span>Mode of Payment :</span> <span contenteditable="true" data-sync="paymentMode">cash</span></div>
+                <div class="b-sub-item"><span>Due Date :</span> <span contenteditable="true" data-sync="dueDate">0 Days</span></div>
+              </div>
+            </div>
+
+            <!-- Table with continuous open vertical lanes (matching original ERP slip) -->
+            <div class="b-table-wrap">
+              <table class="b-table">
+                <thead>
+                  <tr>
+                    <th style="width: 7%;">Sr#</th>
+                    <th style="width: 14%;">HS_CODE</th>
+                    <th style="width: 32%;">Description</th>
+                    <th style="width: 13%; text-align: right;">Quantity</th>
+                    <th style="width: 12%; text-align: right;">Rate</th>
+                    <th style="width: 10%; text-align: right;">Discount</th>
+                    <th style="width: 12%; text-align: right;">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="b-item-row">
+                    <td>1</td>
+                    <td contenteditable="true" data-sync="hscode"></td>
+                    <td contenteditable="true" data-sync="particulars">PETROL</td>
+                    <td style="text-align: right;" contenteditable="true" data-sync="qty">10.000</td>
+                    <td style="text-align: right;" contenteditable="true" data-sync="rate">176.99</td>
+                    <td style="text-align: right;" contenteditable="true" data-sync="disc">0.00</td>
+                    <td style="text-align: right;" data-sync="itemAmount">1,769.91</td>
+                  </tr>
+                  <!-- Tall open lane spacer -->
+                  <tr class="b-open-row">
+                    <td>&nbsp;</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Summary Section Box -->
+            <div class="b-summary-grid">
+              <div class="b-summary-left">
+                <div class="b-remarks-row">
+                  <span>Remarks :</span> <span contenteditable="true" data-sync="remarks"></span>
+                </div>
+                <div class="b-words-row">
+                  <div class="b-words-lbl">Amount Payable In Words:</div>
+                  <div class="b-words-val" data-sync="inWordsCaps">TWO THOUSAND ONLY</div>
+                </div>
+                <div class="b-note-box">
+                  <strong>Note:</strong>
+                  <div>1. Goods once sold will not be returned.</div>
+                  <div>2. Interest will be charged @ of bank rule if payment is not made within due date mentioned above.</div>
+                </div>
+              </div>
+
+              <div class="b-summary-right">
+                <div class="b-calc-row total-qty-row">
+                  <span>Total Quantity: <strong data-sync="totalQty">10.000</strong></span>
+                </div>
+                <div class="b-calc-row">
+                  <span>Gross Amount :</span>
+                  <span class="val" data-sync="basicAmount">1,769.91</span>
+                </div>
+                <div class="b-calc-row">
+                  <span>Discount 0.00 % :</span>
+                  <span class="val" data-sync="discountAmount">0.00</span>
+                </div>
+                <div class="b-calc-row">
+                  <span>Taxable Amount :</span>
+                  <span class="val" data-sync="taxableAmount">1,769.91</span>
+                </div>
+                <div class="b-calc-row">
+                  <span>VAT 13% :</span>
+                  <span class="val" data-sync="vatAmount">230.09</span>
+                </div>
+                <div class="b-calc-row">
+                  <span>Rounded Off :</span>
+                  <span class="val">0.00</span>
+                </div>
+                <div class="b-calc-row b-net-row">
+                  <span>Net Amount :</span>
+                  <strong class="val" data-sync="netAmount">2,000.00</strong>
+                </div>
+                <div class="b-for-company">
+                  For <span data-sync="stationName">BANGLAMUKHI OIL STORE PRIVATE LIMITED</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Signatures Footer with realistic authorized signature mark -->
+            <footer class="b-footer">
+              <div class="b-sig-col">
+                <div class="b-sig-line"></div>
+                <span>Entry By</span>
+              </div>
+              <div class="b-sig-col">
+                <div class="b-sig-line"></div>
+                <span>Received By</span>
+              </div>
+              <div class="b-sig-col b-sig-auth">
+                <div class="b-sig-svg-wrap">
+                  <svg viewBox="0 0 160 38" width="110" height="24">
+                    <path d="M10,22 C35,6 60,30 85,14 C100,5 125,24 150,8 M30,16 Q90,28 140,12" stroke="#111827" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="b-sig-line"></div>
+                <span>Authorized Signatory</span>
+              </div>
+            </footer>
+          </div>
+
+        </div>
+
+        <!-- Perforation / Cut line for 2-Up Landscape -->
+        <div class="cut-divider">
+          <div class="cut-line"></div>
+          <span class="cut-scissors">✂️ Cut Here</span>
+          <div class="cut-line"></div>
+        </div>
+
+        <!-- ==================== BILL 2 (Right Duplicate Copy) ==================== -->
+        <div class="bill-page pink-paper" id="billDocument2" data-bill-id="2">
+          <div class="copy-tag" id="copyTag2"></div>
+
+          <!-- FORMAT 1: HIMAL ENTERPRISES -->
+          <div class="template-view template-himal-view">
+            <header class="h-header">
+              <div class="h-logo-badge">
+                <div class="h-logo-box">
+                  <span class="h-np-text">हिमाल इन्टरप्राइजेज</span>
+                  <span class="h-np-sub">थानकोट, काठमाडौं</span>
+                </div>
+              </div>
+              <div class="h-header-details">
+                <h1 class="h-company-name" contenteditable="true" data-sync="stationName">HIMAL ENTERPRISES</h1>
+                <div class="h-company-address" contenteditable="true" data-sync="stationAddress">CHA.NA. PA-06, CHECKPOST, KATHMANDU</div>
+                <div class="h-company-contact">
+                  Phone No:- <span contenteditable="true" data-sync="stationPhone"></span> , Email :<span contenteditable="true" data-sync="stationEmail">himalenterprises2021@gmail.com</span>
+                </div>
+                <div class="h-company-pan">
+                  PAN/VAT No. : <strong contenteditable="true" data-sync="stationPan">500011548</strong>
+                </div>
+              </div>
+            </header>
+
+            <div class="h-tax-badge">Tax Invoice</div>
+
+            <section class="h-meta-grid">
+              <div class="h-meta-col h-meta-left">
+                <div class="h-meta-row"><span class="h-lbl">Invoice No. :</span> <span class="h-val" contenteditable="true" data-sync="invNo">848</span></div>
+                <div class="h-meta-row"><span class="h-lbl">Buyer :</span> <span class="h-val" contenteditable="true" data-sync="buyer">CASH( C. G. Communications Ltd.)</span></div>
+                <div class="h-meta-row"><span class="h-lbl">Pan No.:</span> <span class="h-val" contenteditable="true" data-sync="pan">301512183</span></div>
+                <div class="h-meta-row"><span class="h-lbl">Address :</span> <span class="h-val" contenteditable="true" data-sync="address"></span></div>
+                <div class="h-meta-row"><span class="h-lbl">Vehicle No.</span> <span class="h-val" contenteditable="true" data-sync="vehicle"></span></div>
+              </div>
+              <div class="h-meta-col h-meta-right">
+                <div class="h-meta-row"><span class="h-lbl">Invoice Date :</span> <span class="h-val" contenteditable="true" data-sync="date">08/08/2026</span></div>
+                <div class="h-meta-row"><span class="h-lbl">Invoice Miti :</span> <span class="h-val" contenteditable="true" data-sync="miti">2083/4/23</span></div>
+                <div class="h-meta-row"><span class="h-lbl">Buyer M.No. :</span> <span class="h-val" contenteditable="true" data-sync="buyerMobile"></span></div>
+              </div>
+            </section>
+
+            <div class="h-table-wrap">
+              <table class="h-table">
+                <thead>
+                  <tr>
+                    <th class="hc-sn">S.N.</th>
+                    <th class="hc-hscode">HSCode</th>
+                    <th class="hc-particulars">Particular's</th>
+                    <th class="hc-qty">Qty</th>
+                    <th class="hc-unit">Unit</th>
+                    <th class="hc-rate">Rate</th>
+                    <th class="hc-disc">Disc.</th>
+                    <th class="hc-amount">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="h-item-row">
+                    <td class="hc-sn">1</td>
+                    <td class="hc-hscode" contenteditable="true" data-sync="hscode">2710.12.10</td>
+                    <td class="hc-particulars" contenteditable="true" data-sync="particulars">Petrol</td>
+                    <td class="hc-qty" contenteditable="true" data-sync="qty">10.00</td>
+                    <td class="hc-unit" contenteditable="true" data-sync="unit">LTRS</td>
+                    <td class="hc-rate" contenteditable="true" data-sync="rate">176.9911</td>
+                    <td class="hc-disc" contenteditable="true" data-sync="disc">0</td>
+                    <td class="hc-amount" data-sync="itemAmount">1,769.91</td>
+                  </tr>
+                  <tr class="h-open-row"><td colspan="8"><div class="h-spacer-box"></div></td></tr>
+                </tbody>
+                <tfoot>
+                  <tr class="h-total-row">
+                    <td colspan="3" class="h-total-lbl">Total</td>
+                    <td class="hc-qty" data-sync="totalQty">10.00</td>
+                    <td colspan="3"></td>
+                    <td class="hc-amount" data-sync="tableTotalAmount">1,769.91</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <section class="h-summary-section">
+              <div class="h-sum-left">
+                <div class="h-words-row">
+                  <span class="h-words-lbl">In Words :-</span>
+                  <span class="h-words-val" data-sync="inWords">NRS Two Thousand And Zero Only</span>
+                </div>
+                <div class="h-remarks-row">
+                  <span class="h-remarks-lbl">Remarks :-</span>
+                  <span class="h-remarks-val" contenteditable="true" data-sync="remarks"></span>
+                </div>
+              </div>
+              <div class="h-sum-right">
+                <div class="h-calc-row"><span>Basic Amount</span><span>:</span><span class="h-calc-val" data-sync="basicAmount">1,769.91</span></div>
+                <div class="h-calc-row"><span>Discount Amount</span><span>:</span><span class="h-calc-val" data-sync="discountAmount"></span></div>
+                <div class="h-calc-row"><span>Taxable Amount</span><span>:</span><span class="h-calc-val" data-sync="taxableAmount">1,769.91</span></div>
+                <div class="h-calc-row"><span>VAT 13%</span><span>:</span><span class="h-calc-val" data-sync="vatAmount">230.09</span></div>
+                <div class="h-calc-row h-net-row"><span>Net Amount</span><span>:</span><span class="h-calc-val" data-sync="netAmount">2,000.00</span></div>
+              </div>
+            </section>
+
+            <footer class="h-footer">
+              <div class="h-sig-left">
+                <div class="h-sig-line"></div>
+                <div class="h-sig-lbl">Customer Signature</div>
+                <div class="h-gen-time">Invoice Generated On:- <span contenteditable="true" data-sync="generatedTime">2026-08-08 13:47:44</span></div>
+              </div>
+              <div class="h-sig-right">
+                <div class="h-prepared-name" contenteditable="true" data-sync="preparedByName">Administrator Admin</div>
+                <div class="h-sig-line"></div>
+                <div class="h-sig-lbl">Prepared By</div>
+              </div>
+            </footer>
+          </div>
+
+          <!-- FORMAT 2: BANGLAMUKHI OIL STORE (ERP EXACT) -->
+          <div class="template-view template-banglamukhi-view">
+            <header class="b-header">
+              <h1 class="b-company-name" contenteditable="true" data-sync="stationName">BANGLAMUKHI OIL STORE PRIVATE LIMITED</h1>
+              <div class="b-address" contenteditable="true" data-sync="stationAddress">Sanobhadyang, Kathmandu</div>
+              <div class="b-contact">Phone No: <span contenteditable="true" data-sync="stationPhone">9745694481</span> ,</div>
+              <div class="b-email">Email: <span contenteditable="true" data-sync="stationEmail">Bangalamukhioilstore@gmail.com</span></div>
+            </header>
+
+            <div class="b-pan-row">
+              <div class="b-pan-container">
+                <span class="b-pan-label">PAN/ VAT No.</span>
+                <div class="b-pan-boxes" id="stationPanBoxes2"></div>
+              </div>
+            </div>
+
+            <div class="b-tax-title-box">
+              <span>Tax Invoice</span>
+            </div>
+
+            <div class="b-meta-box">
+              <div class="b-meta-top">
+                <div class="b-meta-col b-meta-col-left">
+                  <div class="b-row"><span class="b-lbl">M/S</span><span class="b-sep">:</span><strong class="b-val" contenteditable="true" data-sync="buyer">CG Communications</strong></div>
+                  <div class="b-row"><span class="b-lbl">Address</span><span class="b-sep">:</span><span class="b-val" contenteditable="true" data-sync="address">Thapathali, Kathmandu</span></div>
+                  <div class="b-row"><span class="b-lbl">Phone No.</span><span class="b-sep">:</span><span class="b-val" contenteditable="true" data-sync="buyerMobile">9707051000</span></div>
+                  <div class="b-row"><span class="b-lbl">PAN/VAT No.</span><span class="b-sep">:</span><strong class="b-val" contenteditable="true" data-sync="pan">301512183</strong></div>
+                </div>
+                <div class="b-meta-col b-meta-col-right">
+                  <div class="b-row"><span class="b-lbl">Invoice No.</span><span class="b-sep">:</span><span class="b-val" contenteditable="true" data-sync="invNo">TI681-MMX-83/84</span></div>
+                  <div class="b-row"><span class="b-lbl">Transaction Date</span><span class="b-sep">:</span><span class="b-val" contenteditable="true" data-sync="date">31/08/2026</span></div>
+                  <div class="b-row"><span class="b-lbl">Invoice Date</span><span class="b-sep">:</span><span class="b-val" contenteditable="true" data-sync="date">31/08/2026</span></div>
+                  <div class="b-row"><span class="b-lbl">Invoice Miti</span><span class="b-sep">:</span><span class="b-val" contenteditable="true" data-sync="miti">15/05/2083 09:41</span></div>
+                </div>
+              </div>
+              <div class="b-meta-bottom">
+                <div class="b-sub-item"><span>Transport :</span> <span contenteditable="true" data-sync="vehicle"></span></div>
+                <div class="b-sub-item"><span>Mode of Payment :</span> <span contenteditable="true" data-sync="paymentMode">cash</span></div>
+                <div class="b-sub-item"><span>Due Date :</span> <span contenteditable="true" data-sync="dueDate">0 Days</span></div>
+              </div>
+            </div>
+
+            <div class="b-table-wrap">
+              <table class="b-table">
+                <thead>
+                  <tr>
+                    <th style="width: 7%;">Sr#</th>
+                    <th style="width: 14%;">HS_CODE</th>
+                    <th style="width: 32%;">Description</th>
+                    <th style="width: 13%; text-align: right;">Quantity</th>
+                    <th style="width: 12%; text-align: right;">Rate</th>
+                    <th style="width: 10%; text-align: right;">Discount</th>
+                    <th style="width: 12%; text-align: right;">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="b-item-row">
+                    <td>1</td>
+                    <td contenteditable="true" data-sync="hscode"></td>
+                    <td contenteditable="true" data-sync="particulars">PETROL</td>
+                    <td style="text-align: right;" contenteditable="true" data-sync="qty">10.000</td>
+                    <td style="text-align: right;" contenteditable="true" data-sync="rate">176.99</td>
+                    <td style="text-align: right;" contenteditable="true" data-sync="disc">0.00</td>
+                    <td style="text-align: right;" data-sync="itemAmount">1,769.91</td>
+                  </tr>
+                  <tr class="b-open-row">
+                    <td>&nbsp;</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="b-summary-grid">
+              <div class="b-summary-left">
+                <div class="b-remarks-row">
+                  <span>Remarks :</span> <span contenteditable="true" data-sync="remarks"></span>
+                </div>
+                <div class="b-words-row">
+                  <div class="b-words-lbl">Amount Payable In Words:</div>
+                  <div class="b-words-val" data-sync="inWordsCaps">TWO THOUSAND ONLY</div>
+                </div>
+                <div class="b-note-box">
+                  <strong>Note:</strong>
+                  <div>1. Goods once sold will not be returned.</div>
+                  <div>2. Interest will be charged @ of bank rule if payment is not made within due date mentioned above.</div>
+                </div>
+              </div>
+
+              <div class="b-summary-right">
+                <div class="b-calc-row total-qty-row">
+                  <span>Total Quantity: <strong data-sync="totalQty">10.000</strong></span>
+                </div>
+                <div class="b-calc-row">
+                  <span>Gross Amount :</span>
+                  <span class="val" data-sync="basicAmount">1,769.91</span>
+                </div>
+                <div class="b-calc-row">
+                  <span>Discount 0.00 % :</span>
+                  <span class="val" data-sync="discountAmount">0.00</span>
+                </div>
+                <div class="b-calc-row">
+                  <span>Taxable Amount :</span>
+                  <span class="val" data-sync="taxableAmount">1,769.91</span>
+                </div>
+                <div class="b-calc-row">
+                  <span>VAT 13% :</span>
+                  <span class="val" data-sync="vatAmount">230.09</span>
+                </div>
+                <div class="b-calc-row">
+                  <span>Rounded Off :</span>
+                  <span class="val">0.00</span>
+                </div>
+                <div class="b-calc-row b-net-row">
+                  <span>Net Amount :</span>
+                  <strong class="val" data-sync="netAmount">2,000.00</strong>
+                </div>
+                <div class="b-for-company">
+                  For <span data-sync="stationName">BANGLAMUKHI OIL STORE PRIVATE LIMITED</span>
+                </div>
+              </div>
+            </div>
+
+            <footer class="b-footer">
+              <div class="b-sig-col">
+                <div class="b-sig-line"></div>
+                <span>Entry By</span>
+              </div>
+              <div class="b-sig-col">
+                <div class="b-sig-line"></div>
+                <span>Received By</span>
+              </div>
+              <div class="b-sig-col b-sig-auth">
+                <div class="b-sig-svg-wrap">
+                  <svg viewBox="0 0 160 38" width="110" height="24">
+                    <path d="M10,22 C35,6 60,30 85,14 C100,5 125,24 150,8 M30,16 Q90,28 140,12" stroke="#111827" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="b-sig-line"></div>
+                <span>Authorized Signatory</span>
+              </div>
+            </footer>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <div class="app-layout" id="serviceWorkspace" data-workspace="service" hidden>
+    <aside class="control-panel no-print" aria-label="Service bill controls">
+      <nav class="bill-nav" aria-label="Bill type">
+        <a href="index.html">Petrol Bill</a>
+        <a href="service.html" aria-current="page">Service Bill</a>
+      </nav>
+      <div class="panel-header">
+        <h2>Service Bill</h2>
+        <p class="subtitle">Parts, labour, and maintenance. Edit the fields or type directly into the invoice.</p>
+      </div>
+      <div class="action-buttons-top">
+        <button type="button" class="btn-primary btn-download" id="servicePdf">Download PDF</button>
+        <button type="button" class="btn-primary" id="servicePrint">Print A4</button>
+      </div>
+      <a href="#servicePrintSheet" class="service-preview-link">View invoice ↓</a>
+      <p class="app-status" id="serviceStatus" role="status" aria-live="polite" hidden></p>
+      <section class="control-group highlight-box-accent">
+        <h3>Reference bill</h3>
+        <div class="input-field">
+          <label for="serviceSample">Choose a starting point</label>
+          <select id="serviceSample">
+            <option value="mobil">Mobil — single item</option>
+            <option value="maintenance">Service & parts — six items</option>
+            <option value="blank">Blank service bill</option>
+          </select>
+        </div>
+        <button class="btn-secondary" type="button" id="resetService">Reset selected sample</button>
+      </section>
+      <section class="control-group">
+        <h3>Invoice & customer</h3>
+        <div class="input-field"><label for="serviceInvoiceNo">Invoice No.</label><input id="serviceInvoiceNo" data-service-field="invoiceNo" type="text"></div>
+        <div class="input-field service-brand-field">
+          <label for="serviceBrand">Vehicle brand / invoice logo</label>
+          <select id="serviceBrand" aria-describedby="serviceBrandHelp"></select>
+          <div class="service-brand-preview"><img id="serviceBrandPreview" alt="" hidden><div><strong id="serviceBrandName"></strong><a id="serviceBrandSource" target="_blank" rel="noopener noreferrer" hidden>Logo source ↗</a></div></div>
+          <small class="help-text" id="serviceBrandHelp">The selected brand's original logo appears on every invoice page.</small>
+        </div>
+        <div class="input-field"><label for="servicePartner">Dealer / service-centre logo (optional)</label><select id="servicePartner"></select><small class="help-text">Company name and VAT details remain separately editable.</small></div>
+        <div class="input-field"><button type="button" id="saveServiceBrand" class="text-button">Save these logos as my default</button><small id="serviceBrandStatus" class="help-text" role="status" aria-live="polite"></small></div>
+        <div class="input-field"><label for="serviceCustomer">Customer Name</label><input id="serviceCustomer" data-service-field="customerName" type="text"></div>
+        <div class="input-field"><label for="serviceAddress">Customer Address</label><input id="serviceAddress" data-service-field="customerAddress" type="text"></div>
+        <div class="input-field"><label for="serviceCustomerPan">Customer VAT/PAN</label><input id="serviceCustomerPan" data-service-field="customerPan" type="text"></div>
+        <div class="input-field"><label for="serviceContact">Contact No.</label><input id="serviceContact" data-service-field="contact" type="text"></div>
+        <div class="input-field"><label for="serviceBranch">Branch</label><input id="serviceBranch" data-service-field="branch" type="text"></div>
+      </section>
+      <section class="control-group">
+        <h3>Dates & station details</h3>
+        <div class="input-field"><label for="serviceDateAD">Invoice Date (AD)</label><input type="date" id="serviceDateAD" min="1943-04-14" max="2034-04-13" aria-describedby="serviceDateHelp serviceDateError"></div>
+        <div class="input-field"><label for="serviceDateBS">Nepali Miti (BS)</label><input type="text" id="serviceDateBS" placeholder="YYYY/MM/DD" autocomplete="off" aria-describedby="serviceDateHelp serviceDateError"></div>
+        <p class="help-text" id="serviceDateHelp">AD ↔ BS converts automatically. BS: YYYY/MM/DD.</p>
+        <p class="help-text date-error" id="serviceDateError" role="status" aria-live="polite" hidden></p>
+        <label class="service-checkbox"><input type="checkbox" id="serviceShowBS"> Show BS date beside AD on the bill</label>
+        <div class="input-field"><label for="serviceCompany">Company Name</label><input id="serviceCompany" data-service-field="companyName" type="text"></div>
+        <div class="input-field"><label for="serviceLocation">Company Location</label><input id="serviceLocation" data-service-field="companyLocation" type="text"></div>
+        <div class="input-field"><label for="serviceVatNo">VAT Registration No.</label><input id="serviceVatNo" data-service-field="companyPan" type="text"></div>
+      </section>
+      <section class="control-group">
+        <h3>Vehicle & service</h3>
+        <div class="input-field"><label for="serviceVehicle">Vehicle No.</label><input id="serviceVehicle" data-service-field="vehicleNo" type="text"></div>
+        <div class="input-field"><label for="serviceChassis">Chassis No.</label><input id="serviceChassis" data-service-field="chassisNo" type="text"></div>
+        <div class="input-field"><label for="serviceModel">Model</label><input id="serviceModel" data-service-field="model" type="text"></div>
+        <div class="input-field"><label for="serviceVersion">Model Version</label><input id="serviceVersion" data-service-field="modelVersion" type="text"></div>
+        <div class="input-field"><label for="serviceOrder">Service Order Type</label><input id="serviceOrder" data-service-field="orderType" type="text"></div>
+        <div class="input-field"><label for="serviceMileage">Kilometrage</label><input id="serviceMileage" data-service-field="kilometrage" type="text" inputmode="numeric"></div>
+      </section>
+      <section class="control-group">
+        <div class="service-section-heading"><h3>Parts & labour</h3><span id="serviceItemCount"></span></div>
+        <p class="subtitle service-item-help">Unit prices exclude VAT. Each discount applies to its item before 13% VAT.</p>
+        <div id="serviceItemEditor"></div>
+        <button type="button" class="btn-secondary service-add" id="addServiceItem">+ Add item</button>
+      </section>
+      <section class="control-group">
+        <h3>Narration & signatures</h3>
+        <div class="input-field"><label for="serviceNarration">Narration</label><textarea id="serviceNarration" data-service-field="narration" rows="3"></textarea></div>
+        <div class="input-field"><label for="servicePreparedBy">Prepared By</label><input id="servicePreparedBy" data-service-field="preparedBy" type="text"></div>
+        <div class="input-field"><label for="servicePrintedOn">Printed On</label><input id="servicePrintedOn" data-service-field="printedOn" type="text" placeholder="DD/MM/YYYY, HH:mm:ss"></div>
+      </section>
+    </aside>
+    <main class="preview-area service-preview" aria-label="Service invoice preview">
+      <div class="service-print-sheet" id="servicePrintSheet"></div>
+    </main>
+  </div>
+  <template id="servicePageTemplate">
+    <article class="service-page" aria-label="Service tax invoice">
+      <header>
+        <div class="service-brands">
+          <span class="service-brand-slot"><img class="service-brand-logo" alt="" hidden></span>
+          <span class="service-partner-slot"><img class="service-partner-logo" alt="" hidden></span>
+        </div>
+        <div class="service-company">
+          <h1 data-service-sync="companyName" contenteditable="plaintext-only"></h1>
+          <div data-service-sync="companyLocation" contenteditable="plaintext-only"></div>
+          <div>VAT Registration No.: <strong data-service-sync="companyPan" contenteditable="plaintext-only"></strong></div>
+          <h2>TAX INVOICE</h2>
+        </div>
+      </header>
+      <section class="service-metadata" aria-label="Customer and vehicle details">
+        <dl>
+          <div><dt>Invoice No :</dt><dd data-service-sync="invoiceNo" contenteditable="plaintext-only"></dd></div>
+          <div><dt>Customer Name :</dt><dd data-service-sync="customerName" contenteditable="plaintext-only"></dd></div>
+          <div><dt>Customer Address :</dt><dd data-service-sync="customerAddress" contenteditable="plaintext-only"></dd></div>
+          <div><dt>Customer's VAT/PAN:</dt><dd data-service-sync="customerPan" contenteditable="plaintext-only"></dd></div>
+          <div><dt>Contact No. :</dt><dd data-service-sync="contact" contenteditable="plaintext-only"></dd></div>
+          <div><dt>Branch :</dt><dd data-service-sync="branch" contenteditable="plaintext-only"></dd></div>
+        </dl>
+        <dl>
+          <div><dt>Invoice Date :</dt><dd data-service-sync="displayDate"></dd></div>
+          <div><dt>Vehicle No :</dt><dd data-service-sync="vehicleNo" contenteditable="plaintext-only"></dd></div>
+          <div><dt>Chassis No :</dt><dd data-service-sync="chassisNo" contenteditable="plaintext-only"></dd></div>
+          <div><dt>Model :</dt><dd data-service-sync="model" contenteditable="plaintext-only"></dd></div>
+          <div><dt>Model Version :</dt><dd data-service-sync="modelVersion" contenteditable="plaintext-only"></dd></div>
+          <div><dt>Service Order Type:</dt><dd data-service-sync="orderType" contenteditable="plaintext-only"></dd></div>
+          <div><dt>Kilometrage:</dt><dd data-service-sync="kilometrage" contenteditable="plaintext-only"></dd></div>
+        </dl>
+      </section>
+      <table class="service-lines">
+        <caption class="sr-only">Service parts and labour</caption>
+        <colgroup><col style="width:5%"><col style="width:14%"><col style="width:12%"><col style="width:24%"><col style="width:7%"><col style="width:6%"><col style="width:12%"><col style="width:7%"><col style="width:13%"></colgroup>
+        <thead><tr><th scope="col">S.No.</th><th scope="col">No.</th><th scope="col">HS Code</th><th scope="col">Description</th><th scope="col" class="numeric">Quantity</th><th scope="col">Unit</th><th scope="col" class="numeric">Unit Price</th><th scope="col" class="numeric">Disc. %</th><th scope="col" class="numeric">Amount</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <section class="service-totals" aria-label="Invoice totals">
+        <dl>
+          <div><dt>Total Amount</dt><dd data-service-sync="grossAmount"></dd></div>
+          <div><dt>Discount Amount</dt><dd data-service-sync="discountAmount"></dd></div>
+          <div><dt>Total Taxable Amount</dt><dd data-service-sync="taxableAmount"></dd></div>
+          <div><dt>13% VAT</dt><dd data-service-sync="vatAmount"></dd></div>
+          <div class="service-net"><dt>Total NPR Incl. VAT</dt><dd data-service-sync="netAmount"></dd></div>
+        </dl>
+      </section>
+      <div class="service-closing">
+        <p><strong>Total Amount in Words :</strong> <span data-service-sync="inWords"></span></p>
+        <p><strong>Narration:</strong> <span data-service-sync="narration" contenteditable="plaintext-only"></span></p>
+      </div>
+      <p class="service-continued" hidden>Continued on the next page.</p>
+      <footer class="service-footer">
+        <div class="service-signatures">
+          <div><span class="service-signer" data-service-sync="preparedBy" contenteditable="plaintext-only"></span><span class="service-signature-line"></span><span>Prepared By</span></div>
+          <div><span class="service-signer"></span><span class="service-signature-line"></span><span>Customer's Signature</span></div>
+        </div>
+        <div class="service-page-meta"><span class="service-page-number"></span><span>Printed On : <span data-service-sync="printedOn" contenteditable="plaintext-only"></span></span></div>
+      </footer>
+    </article>
+  </template>
+  <template id="serviceItemTemplate">
+    <fieldset class="service-item-card">
+      <legend></legend>
+      <div class="service-item-fields">
+        <label>Part / Service No.<input type="text" data-item-field="code"></label>
+        <label>HS Code<input type="text" data-item-field="hsCode"></label>
+        <label class="service-item-description">Description<input type="text" data-item-field="description" maxlength="180"></label>
+        <label>Quantity<input type="number" min="0.001" max="1000000" step="0.001" data-item-field="qty"></label>
+        <label>Unit<input type="text" data-item-field="unit"></label>
+        <label>Unit Price (excl. VAT)<input type="number" min="0" max="999999999.99" step="0.000001" data-item-field="unitPrice"></label>
+        <label>Discount %<input type="number" min="0" max="100" step="0.01" data-item-field="discountPercent"></label>
+      </div>
+      <div class="service-item-bottom"><span class="service-line-amount"></span><button type="button" class="service-remove">Remove</button></div>
+    </fieldset>
+  </template>
+  <script src="vendor/nepali-date-converter-3.4.0.umd.js"></script>
+  <script src="invoice-dates.js"></script>
+  <script src="invoice-math.js"></script>
+  <script src="invoice-export.js"></script>
+  <script src="service-math.js"></script>
+  <script src="service-brands.js"></script>
+  <script src="auto-bill.js"></script>
+  <script src="invoice-document.js"></script>
+  <script src="auto-mode.js"></script>
+  <script src="workspace.js"></script>
+  <script src="app.js"></script>
+  <script src="service.js"></script>
+</body>
+</html>

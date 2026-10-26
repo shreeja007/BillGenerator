@@ -1,0 +1,35 @@
+# Installed dependencies
+node_modules/
+
+# Local environment variables and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Logs, caches, and test output
+*.log
+logs/
+.cache/
+coverage/
+.nyc_output/
+
+# Generated bill exports
+exports/
+Petrol_Tax_Invoice_*.pdf
+Service_Tax_Invoice_*.pdf
+
+# Editor and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+[Dd]esktop.ini
+*.swp
+*.swo
+*~
+*.tmp
+*.bak
+
+# Keep package-lock.json, service-brands.js, assets/, and vendor/ tracked:
+# they are needed for reproducible installs and the buildless app.

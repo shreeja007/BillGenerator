@@ -1,0 +1,16 @@
+{
+  "retrieved": "2026-10-26",
+  "brands": [
+    { "id": "yamaha", "name": "Yamaha", "file": "yamaha-identity.png", "mime": "image/png", "website": "https://global.yamaha-motor.com/", "source": "https://global.yamaha-motor.com/shared/img/rwd_identity.png" },
+    { "id": "honda", "name": "Honda", "file": "honda-header.png", "mime": "image/png", "website": "https://honda.com.np/", "source": "https://honda.com.np/wp-content/themes/honda/assets/img/global_top_logo.png" },
+    { "id": "bajaj", "name": "Bajaj", "file": "bajaj.svg", "mime": "image/svg+xml", "website": "https://www.bajajauto.com/", "source": "https://cdn.bajajauto.com/rev-images/bajaj-logo.svg" },
+    { "id": "tvs", "name": "TVS", "file": "tvs.png", "mime": "image/png", "website": "https://www.tvsmotor.com/en/np", "source": "https://www.tvsmotor.com/np/-/media/Feature/IB/TVS-Logo/tvs-logo.png" },
+    { "id": "suzuki", "name": "Suzuki", "file": "suzuki.png", "mime": "image/png", "website": "https://www.suzukimotorcycle.co.in/", "source": "https://s3.ap-south-1.amazonaws.com/suzuki-website-s3/public-live/images/website/logo.jpg" },
+    { "id": "royal-enfield", "name": "Royal Enfield", "file": "royal-enfield.svg", "mime": "image/svg+xml", "website": "https://www.royalenfield.com/np/en/home/", "source": "https://www.royalenfield.com/content/dam/royal-enfield/india/logos/logo.svg" },
+    { "id": "hero", "name": "Hero", "file": "hero.svg", "mime": "image/svg+xml", "website": "https://www.heromotocorp.com/en-np", "source": "https://www.heromotocorp.com/content/dam/hero-aem-website/in/design-bd/brand/hero-logo.svg" },
+    { "id": "ktm", "name": "KTM", "file": "ktm.jpg", "mime": "image/jpeg", "website": "https://www.ktm.com/en-us.html", "source": "https://www.ktm.com/content/dam/websites/ktm-com/language-masters/en/logo/37860_KTM_LogoPodium_orange_RGB.jpg" }
+  ],
+  "partners": [
+    { "id": "maw", "name": "MAW Group", "file": "maw.svg", "mime": "image/svg+xml", "website": "https://mawnepal.com/", "source": "https://mawnepal.com/wp-content/themes/maw/assets/logo-black-text.svg" }
+  ]
+}

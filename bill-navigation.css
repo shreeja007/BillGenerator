@@ -1,0 +1,5 @@
+.bill-nav { display: flex; gap: 4px; padding: 4px; background: #0f172a; border: 1px solid var(--border-color); border-radius: 7px; }
+.bill-nav a { flex: 1; padding: 9px 12px; text-align: center; color: #cbd5e1; text-decoration: none; font-size: .82rem; font-weight: 600; border-radius: 4px; }
+.bill-nav a[aria-current="page"] { background: #334155; color: #fff; }
+.bill-nav a:hover { background: #1e293b; }
+.bill-nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }

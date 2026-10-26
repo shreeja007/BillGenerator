@@ -1,0 +1,70 @@
+.service-app .control-panel { width: 420px; }
+.service-app .control-group h3 { color: #cbd5e1; }
+.service-app .highlight-box-accent h3 { color: #fbbf24; }
+.input-field textarea { width: 100%; resize: vertical; background: #0f172a; color: #fff; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 10px; font: inherit; font-size: .84rem; }
+.service-checkbox { display: flex; gap: 8px; align-items: flex-start; margin: 10px 0 14px; font-size: .76rem; color: #cbd5e1; }
+.service-checkbox input { accent-color: var(--accent); }
+.service-section-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.service-section-heading > span { font-size: .72rem; color: var(--text-muted); }
+.service-item-help { color: var(--text-muted); font-size: .74rem; line-height: 1.45; margin-bottom: 12px; }
+.service-item-card { min-width: 0; border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; margin-bottom: 12px; }
+.service-item-card legend { color: #e2e8f0; font-size: .76rem; font-weight: 600; padding: 0 5px; }
+.service-item-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.service-item-fields label { font-size: .69rem; color: #cbd5e1; }
+.service-item-fields input { display: block; width: 100%; margin-top: 4px; padding: 7px 8px; background: #0f172a; border: 1px solid var(--border-color); border-radius: 4px; color: #fff; font: inherit; font-size: .8rem; }
+.service-item-fields input:focus, .input-field textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.service-item-description { grid-column: 1 / -1; }
+.service-item-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 9px; color: #a5f3fc; font-size: .75rem; }
+.service-remove { border: 0; background: transparent; color: #fda4af; text-decoration: underline; cursor: pointer; padding: 6px; font: inherit; }
+.service-add { width: 100%; color: #e2e8f0; }
+.service-preview { padding: 24px; }
+.service-preview-link { display: none; }
+.service-print-sheet { width: 194mm; flex: none; margin-inline: auto; color: #151515; }
+.service-page { width: 194mm; min-height: 280mm; display: flex; flex-direction: column; padding: 10mm; margin-bottom: 24px; background: white; box-shadow: 0 10px 25px #0005; color: #111; font: 10px/1.3 Arial, Helvetica, sans-serif; }
+.service-brands { display: flex; align-items: center; justify-content: space-between; height: 21mm; border-bottom: 1px solid #bbb; }
+.service-brand-slot, .service-partner-slot { display: flex; align-items: center; height: 18mm; }
+.service-brand-logo { width: auto; height: auto; max-width: 43mm; max-height: 16mm; }
+.service-partner-logo { width: auto; height: auto; max-width: 27mm; max-height: 12mm; }
+.service-brand-preview { display: flex; align-items: center; gap: 13px; margin-top: 11px; padding: 12px; background: white; border: 1px solid #e1e4d9; border-radius: 6px; color: #334e3d; }
+.service-brand-preview > img { width: 96px; height: 42px; object-fit: contain; }
+.service-brand-preview strong { display: block; font-size: 11px; }
+.service-brand-preview a { display: inline-block; margin-top: 5px; font-size: 9px; color: #718762; text-underline-offset: 2px; }
+.service-company { text-align: center; padding: 5px 0 16px; }
+.service-company h1 { font-size: 16px; line-height: 1.3; }
+.service-company h2 { font-size: 14px; margin-top: 2px; }
+.service-metadata { display: flex; gap: 14px; border-top: 1px solid #333; border-bottom: 1px solid #777; padding: 5px 0; margin-bottom: 12px; }
+.service-metadata dl { width: calc(50% - 7px); }
+.service-metadata dl > div { display: flex; align-items: baseline; }
+.service-metadata dt { width: 43%; flex-shrink: 0; padding-right: 3px; }
+.service-metadata dd { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.service-lines { table-layout: fixed; width: 100%; border-collapse: collapse; font-size: 9.5px; }
+.service-lines th { font-weight: 700; text-align: left; vertical-align: top; padding: 3px 3px 9px 0; }
+.service-lines td { padding: 3px 3px 3px 0; vertical-align: top; overflow-wrap: anywhere; }
+.service-lines .numeric { text-align: right; font-variant-numeric: tabular-nums; }
+.service-lines td:last-child, .service-lines th:last-child { padding-right: 0; }
+.service-totals { align-self: flex-end; width: 47%; margin: 16px 0 4px; }
+.service-totals dl > div { display: flex; justify-content: space-between; gap: 10px; padding: 1px 0; }
+.service-totals dd { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.service-net { font-weight: 700; border-top: 1px solid #777; margin-top: 2px; padding-top: 3px !important; }
+.service-closing { margin-top: 1px; }
+.service-closing p { padding: 3px 0; overflow-wrap: anywhere; }
+.service-continued { margin-top: 12px; font-style: italic; }
+.service-footer { margin-top: auto; padding-top: 24mm; }
+.service-signatures { display: flex; justify-content: space-between; }
+.service-signatures > div { width: 32%; display: flex; flex-direction: column; }
+.service-signatures > div:last-child { text-align: center; }
+.service-signer { min-height: 17px; }
+.service-signature-line { border-bottom: 1px solid #333; margin-bottom: 4px; }
+.service-page-meta { display: flex; justify-content: space-between; gap: 20px; padding-top: 22px; font-size: 8px; color: #555; }
+.service-page [contenteditable] { min-height: 1em; }
+.service-print-sheet.pdf-export { margin: 0; }
+.service-print-sheet.pdf-export .service-page { box-shadow: none; margin-bottom: 0; break-after: page; }
+.service-print-sheet.pdf-export .service-page:last-child { break-after: auto; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media screen and (max-width: 760px) { .service-app .control-panel { width: 100%; } .service-preview { padding: 16px; } .service-preview-link { display: block; color: #a5f3fc; text-align: center; font-size: .8rem; } }
+@media print {
+  @page { size: A4 portrait; margin: 8mm; }
+  .service-print-sheet { width: 194mm; margin: 0; }
+  .service-page { margin: 0; box-shadow: none; break-after: page; break-inside: avoid; }
+  .service-page:last-child { break-after: auto; }
+}

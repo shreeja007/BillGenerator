@@ -1,0 +1,1168 @@
+/* CSS Stylesheet for Nepal Petrol Bill Tax Invoice Template */
+
+:root {
+  --bg-app: #0f172a;
+  --bg-sidebar: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent: #38bdf8;
+  --accent-hover: #0ea5e9;
+  --border-color: #334155;
+  
+  /* Pink Receipt Paper Colors */
+  --receipt-pink: #f7a2bf;
+  --receipt-ink: #111827;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar Control Panel */
+.control-panel {
+  width: 380px;
+  min-width: 360px;
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  padding: 18px;
+  overflow-y: auto;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  z-index: 10;
+}
+
+.panel-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-header .subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Top Action Buttons */
+.action-buttons-top {
+  display: flex;
+  gap: 8px;
+}
+
+.action-buttons-top button {
+  flex: 1;
+}
+
+.btn-download {
+  background: #10b981 !important;
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3) !important;
+}
+
+.btn-download:hover {
+  background: #059669 !important;
+}
+
+.control-group {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.control-group.highlight-box {
+  border-color: #0284c7;
+  background: rgba(2, 132, 199, 0.1);
+}
+
+.control-group.highlight-box-accent {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.control-group h3 {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.layout-switch {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.radio-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.radio-card:has(input:checked) {
+  border-color: var(--accent);
+  background: rgba(56, 189, 248, 0.15);
+}
+
+.radio-card input {
+  accent-color: var(--accent);
+}
+
+.radio-card-content strong {
+  display: block;
+  font-size: 0.82rem;
+  color: #fff;
+}
+
+.radio-card-content small {
+  font-size: 0.70rem;
+  color: var(--text-muted);
+}
+
+.mt-2 {
+  margin-top: 8px;
+}
+
+.input-field {
+  margin-bottom: 10px;
+}
+
+.input-field:last-child {
+  margin-bottom: 0;
+}
+
+.input-field label {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: #cbd5e1;
+  margin-bottom: 3px;
+}
+
+.input-field input,
+.input-field select {
+  width: 100%;
+  padding: 7px 10px;
+  background-color: #0f172a;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.84rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.input-field input:focus,
+.input-field select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+}
+
+.input-with-prefix {
+  display: flex;
+  align-items: center;
+  background-color: #0f172a;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+.input-with-prefix span {
+  padding: 0 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border-color);
+}
+
+.input-with-prefix input {
+  border: none;
+  border-radius: 0 6px 6px 0;
+}
+
+.help-text {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.72rem;
+  color: #a5f3fc;
+}
+
+.date-error { color: #fda4af; }
+[aria-invalid="true"] { border-color: #fb7185 !important; }
+
+.calc-mode-switch {
+  display: flex;
+  gap: 10px;
+  margin: 8px 0;
+  background: #0f172a;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.calc-mode-switch label {
+  font-size: 0.76rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  color: #e2e8f0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.theme-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-theme {
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: #0f172a;
+  color: #cbd5e1;
+  font-size: 0.80rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.btn-theme.active {
+  border-color: var(--accent);
+  background: rgba(56, 189, 248, 0.15);
+  color: #fff;
+  font-weight: 600;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.btn-primary {
+  padding: 10px 12px;
+  background: #0284c7;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.btn-primary:hover {
+  background: #0369a1;
+}
+
+.btn-secondary {
+  padding: 8px;
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+/* ======================================================== */
+/* TEMPLATE SWITCHER VISIBILITY                             */
+/* ======================================================== */
+
+.template-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.format-himal .template-himal-view {
+  display: flex;
+}
+.format-himal .template-banglamukhi-view {
+  display: none !important;
+}
+
+.format-banglamukhi .template-banglamukhi-view {
+  display: flex;
+}
+.format-banglamukhi .template-himal-view {
+  display: none !important;
+}
+
+/* ======================================================== */
+/* PREVIEW AREA & A4 CONTAINER                              */
+/* ======================================================== */
+
+.preview-area {
+  flex: 1;
+  padding: 24px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  background: radial-gradient(circle at top, #1e293b, #0f172a);
+}
+
+.print-container {
+  display: flex;
+  position: relative;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+/* A4 Landscape 2-Up View */
+.print-container.landscape-mode {
+  width: 284mm;
+  min-height: 185mm;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 6mm;
+  background: transparent;
+}
+
+/* Single Portrait Mode */
+.print-container.portrait-mode {
+  width: 190mm;
+  min-height: 260mm;
+  flex-direction: column;
+}
+
+.print-container.portrait-mode #billDocument2,
+.print-container.portrait-mode .cut-divider {
+  display: none !important;
+}
+
+/* Cut Perforation line */
+.cut-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  position: relative;
+  user-select: none;
+}
+
+.cut-line {
+  flex: 1;
+  width: 1px;
+  border-left: 1.2px dashed #64748b;
+}
+
+.cut-scissors {
+  font-size: 9px;
+  color: #94a3b8;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding: 6px 0;
+}
+
+/* The Individual Bill Page */
+.bill-page {
+  color: var(--receipt-ink);
+  position: relative;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.2s;
+  box-sizing: border-box;
+}
+
+/* Landscape Mode Sizing per bill */
+.landscape-mode .bill-page {
+  width: 136mm;
+  min-height: 185mm;
+  padding: 4mm 5.5mm 4.5mm 5.5mm;
+  font-size: 9.6px;
+  line-height: 1.15;
+}
+
+/* Portrait Mode Sizing per bill */
+.portrait-mode .bill-page {
+  width: 190mm;
+  min-height: 260mm;
+  padding: 12mm 14mm 10mm 14mm;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.copy-tag {
+  text-align: right;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #334155;
+  margin-bottom: -2px;
+  min-height: 10px;
+}
+
+/* Themes */
+.bill-page.pink-paper {
+  background-color: #f7a2bf;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%;
+}
+
+.bill-page.white-paper {
+  background-color: #ffffff;
+}
+
+/* Content Editable styling */
+[contenteditable="true"] {
+  outline: none;
+  border-radius: 2px;
+  transition: background 0.15s;
+}
+
+[contenteditable="true"]:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[contenteditable="true"]:focus {
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 0 1px #000;
+}
+
+/* ======================================================== */
+/* FORMAT 1: HIMAL ENTERPRISES (EXACT PINK SLIP MATCH)      */
+/* ======================================================== */
+
+.template-himal-view {
+  font-family: 'Courier Prime', 'Consolas', monospace;
+}
+
+.h-header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+.h-logo-badge {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+}
+
+.h-logo-box {
+  border: 1px solid var(--receipt-ink);
+  border-radius: 50%;
+  width: 52px;
+  height: 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  padding: 1px;
+  opacity: 0.85;
+}
+
+.portrait-mode .h-logo-box {
+  width: 70px;
+  height: 48px;
+}
+
+.h-logo-box .h-np-text {
+  font-size: 6.5px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.portrait-mode .h-logo-box .h-np-text {
+  font-size: 8px;
+}
+
+.h-logo-box .h-np-sub {
+  font-size: 5px;
+  line-height: 1;
+}
+
+.h-company-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 1px;
+}
+
+.portrait-mode .h-company-name {
+  font-size: 19px;
+  margin-bottom: 2px;
+}
+
+.h-company-address,
+.h-company-contact {
+  font-size: 9px;
+  font-weight: 700;
+  margin-bottom: 1px;
+}
+
+.h-company-pan {
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.h-tax-badge {
+  text-align: center;
+  font-weight: 700;
+  font-size: 10.5px;
+  margin: 2px 0 4px 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.portrait-mode .h-tax-badge {
+  font-size: 13.5px;
+  margin: 4px 0 8px 0;
+}
+
+.h-meta-grid {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--receipt-ink);
+  border-bottom: 1px solid var(--receipt-ink);
+  padding: 3px 1px;
+  margin-bottom: 0px;
+  font-size: 9.5px;
+}
+
+.portrait-mode .h-meta-grid {
+  padding: 6px 2px;
+  font-size: 12px;
+}
+
+.h-meta-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5px;
+}
+
+.h-meta-left { flex: 1.35; }
+.h-meta-right { flex: 0.95; }
+
+.h-meta-row {
+  display: flex;
+  align-items: baseline;
+}
+
+.h-lbl {
+  font-weight: 700;
+  min-width: 75px;
+  display: inline-block;
+}
+
+.portrait-mode .h-lbl { min-width: 100px; }
+.h-val { flex: 1; font-weight: 400; }
+
+/* Himal Table with open vertical lanes */
+.h-table-wrap {
+  width: 100%;
+}
+
+.h-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: -1px;
+  font-size: 9.5px;
+}
+
+.portrait-mode .h-table {
+  font-size: 12px;
+}
+
+.h-table th,
+.h-table td {
+  border-left: 1px solid var(--receipt-ink);
+  border-right: 1px solid var(--receipt-ink);
+  padding: 1.5px 3px;
+  vertical-align: middle;
+}
+
+.h-table thead tr {
+  border-top: 1px solid var(--receipt-ink);
+  border-bottom: 1px solid var(--receipt-ink);
+}
+
+.h-table th {
+  font-weight: 700;
+  text-align: left;
+  padding: 2px 3px;
+}
+
+.hc-sn { width: 6%; text-align: center; }
+.hc-hscode { width: 15%; }
+.hc-particulars { width: 28%; }
+.hc-qty { width: 11%; text-align: right; }
+.hc-unit { width: 8%; text-align: center; }
+.hc-rate { width: 15%; text-align: right; }
+.hc-disc { width: 5%; text-align: center; }
+.hc-amount { width: 12%; text-align: right; }
+
+.h-open-row td {
+  height: 48px;
+  border-top: none;
+  border-bottom: none;
+  padding: 0;
+}
+
+.portrait-mode .h-open-row td {
+  height: 80px;
+}
+
+.h-total-row {
+  border-top: 1px solid var(--receipt-ink);
+  border-bottom: 1px solid var(--receipt-ink);
+  font-weight: 700;
+}
+
+.h-total-row td {
+  padding: 2px 3px;
+}
+
+.h-total-lbl {
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Himal Summary */
+.h-summary-section {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 1px;
+  font-size: 9.5px;
+}
+
+.h-sum-left {
+  flex: 1.15;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 6px;
+}
+
+.h-words-row {
+  margin-top: 1px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.h-words-lbl {
+  font-weight: 700;
+  font-style: italic;
+  margin-right: 2px;
+}
+
+.h-words-val {
+  font-weight: 700;
+  font-style: italic;
+}
+
+.h-remarks-row {
+  margin-top: 6px;
+  font-weight: 700;
+}
+
+.h-sum-right {
+  flex: 0.95;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.h-calc-row {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+}
+
+.h-calc-row span:first-child { width: 95px; }
+.h-calc-row span:nth-child(2) { width: 10px; text-align: center; }
+.h-calc-val { flex: 1; text-align: right; }
+
+.h-net-row {
+  border-top: 1px solid var(--receipt-ink);
+  padding-top: 1px;
+  margin-top: 1px;
+}
+
+.h-footer {
+  margin-top: auto;
+  padding-top: 12px;
+  padding-bottom: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 8.8px;
+  width: 100%;
+}
+
+.h-sig-left { width: 52%; text-align: left; }
+.h-sig-right { width: 44%; text-align: center; }
+
+.h-prepared-name {
+  font-size: 9.2px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  text-align: center;
+}
+
+.h-sig-line {
+  width: 100%;
+  border-bottom: 1.5px dotted var(--receipt-ink);
+  margin-bottom: 3px;
+  height: 1px;
+}
+
+.h-sig-lbl { font-weight: 700; margin-bottom: 1px; white-space: nowrap; }
+.h-gen-time { font-size: 8.2px; font-weight: 700; margin-top: 2px; white-space: nowrap; }
+
+/* ======================================================== */
+/* FORMAT 2: BANGLAMUKHI OIL STORE (EXACT ERP MATCH)        */
+/* ======================================================== */
+
+.template-banglamukhi-view {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #111827;
+}
+
+.b-header {
+  text-align: center;
+  margin-bottom: 1px;
+}
+
+.b-company-name {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+  margin-bottom: 1px;
+}
+
+.portrait-mode .b-company-name { font-size: 15px; }
+
+.b-address,
+.b-contact,
+.b-email {
+  font-size: 8px;
+  line-height: 1.15;
+}
+
+.portrait-mode .b-address,
+.portrait-mode .b-contact,
+.portrait-mode .b-email { font-size: 10.5px; }
+
+/* Top Left PAN row */
+.b-pan-row {
+  display: flex;
+  justify-content: flex-start;
+  margin: 1px 0 2px 0;
+}
+
+.b-pan-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.b-pan-label {
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.portrait-mode .b-pan-label { font-size: 10.5px; }
+
+.b-pan-boxes {
+  display: flex;
+  gap: 1px;
+}
+
+.b-pan-box {
+  width: 12px;
+  height: 13px;
+  border: 1px solid #111827;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8.5px;
+  font-weight: 700;
+  font-family: 'Roboto Mono', monospace;
+  background: #fff;
+}
+
+.portrait-mode .b-pan-box {
+  width: 16px;
+  height: 17px;
+  font-size: 11.5px;
+}
+
+/* Centered Tax Invoice Box */
+.b-tax-title-box {
+  border: 1px solid #111827;
+  width: 100px;
+  margin: 1px auto 3px auto;
+  text-align: center;
+  font-weight: 700;
+  font-size: 9.5px;
+  padding: 1px 3px;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.portrait-mode .b-tax-title-box {
+  width: 130px;
+  font-size: 12.5px;
+  padding: 2px 4px;
+}
+
+/* Enclosed Metadata Box */
+.b-meta-box {
+  border: 1px solid #111827;
+  padding: 2.5px 4px;
+  margin-bottom: 0px;
+  font-size: 8px;
+}
+
+.portrait-mode .b-meta-box {
+  font-size: 10.5px;
+  padding: 5px 8px;
+}
+
+.b-meta-top {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 2px;
+  border-bottom: 1px solid #111827;
+}
+
+.b-meta-col-left { width: 52%; }
+.b-meta-col-right { width: 46%; }
+
+.b-row {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 0.5px;
+}
+
+.b-lbl {
+  width: 78px;
+  font-weight: 500;
+}
+
+.b-sep { width: 6px; }
+.b-val { flex: 1; }
+
+.b-meta-bottom {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1.5px;
+  font-size: 7.8px;
+}
+
+.portrait-mode .b-meta-bottom { font-size: 10px; }
+
+/* Banglamukhi Table with continuous open vertical lanes */
+.b-table-wrap {
+  width: 100%;
+}
+
+.b-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #111827;
+  border-top: none;
+  font-size: 8.2px;
+}
+
+.portrait-mode .b-table { font-size: 11px; }
+
+.b-table th,
+.b-table td {
+  border: 1px solid #111827;
+  padding: 1.5px 3px;
+}
+
+.portrait-mode .b-table th,
+.portrait-mode .b-table td { padding: 3px 5px; }
+
+.b-table th {
+  font-weight: 700;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.b-item-row td {
+  border-bottom: none;
+}
+
+.b-open-row td {
+  height: 48px;
+  border-top: none;
+  border-bottom: 1px solid #111827;
+}
+
+.portrait-mode .b-open-row td {
+  height: 80px;
+}
+
+/* Banglamukhi Summary Box */
+.b-summary-grid {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #111827;
+  border-top: none;
+  font-size: 8px;
+  padding: 2.5px 3.5px;
+}
+
+.portrait-mode .b-summary-grid {
+  font-size: 10.5px;
+  padding: 5px 8px;
+}
+
+.b-summary-left {
+  width: 54%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.b-remarks-row { margin-bottom: 1px; }
+.b-words-row { margin: 1.5px 0; }
+.b-words-lbl { font-weight: 700; }
+.b-words-val { font-weight: 700; text-transform: uppercase; }
+
+.b-note-box {
+  font-size: 6.8px;
+  line-height: 1.15;
+  color: #1f2937;
+  margin-top: 3px;
+}
+
+.portrait-mode .b-note-box { font-size: 9px; }
+
+.b-summary-right {
+  width: 44%;
+  border-left: 1px solid #111827;
+  padding-left: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5px;
+}
+
+.b-calc-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.b-calc-row.total-qty-row {
+  font-weight: 700;
+  border-bottom: 1px solid #111827;
+  padding-bottom: 1px;
+  margin-bottom: 1px;
+}
+
+.b-net-row {
+  border-top: 1px solid #111827;
+  border-bottom: 1px solid #111827;
+  padding: 1px 0;
+  font-weight: 700;
+}
+
+.b-for-company {
+  font-size: 7.2px;
+  font-weight: 700;
+  text-align: right;
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+
+.portrait-mode .b-for-company { font-size: 9.5px; }
+
+/* 3-Column Footer */
+.b-footer {
+  margin-top: auto;
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 7.8px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.portrait-mode .b-footer {
+  padding-top: 22px;
+  font-size: 10.5px;
+}
+
+.b-sig-col {
+  width: 29%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.b-sig-line {
+  width: 100%;
+  border-bottom: 1px solid #111827;
+  margin-bottom: 2px;
+  height: 1px;
+}
+
+.b-sig-auth {
+  position: relative;
+}
+
+.b-sig-svg-wrap {
+  margin-bottom: -6px;
+  opacity: 0.9;
+}
+
+/* Match screen, print, and PDF dimensions to the available A4 content box. */
+.print-container.landscape-mode {
+  width: 285mm;
+  min-height: 201mm;
+  flex: none;
+  display: flex;
+  gap: 0;
+}
+.landscape-mode .bill-page {
+  width: 138mm;
+  flex: 0 0 138mm;
+  min-height: 201mm;
+}
+.cut-divider { width: 3mm; flex: 0 0 3mm; }
+.template-view { flex: 1; height: auto; }
+.print-container.portrait-mode {
+  width: 194mm;
+  min-height: 280mm;
+  flex: none;
+}
+.portrait-mode .bill-page {
+  width: 100%;
+  min-height: 280mm;
+}
+.control-panel { flex-shrink: 0; }
+.preview-area {
+  min-width: 0;
+  overflow: auto;
+  justify-content: flex-start;
+}
+.print-container { margin-inline: auto; }
+[hidden] { display: none !important; }
+.app-status {
+  padding: 10px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  color: var(--text-main);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+button:disabled { opacity: 0.55; cursor: wait; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+[contenteditable="plaintext-only"] { outline: none; border-radius: 2px; }
+[contenteditable="plaintext-only"]:hover { background: rgba(0, 0, 0, 0.05); }
+[contenteditable="plaintext-only"]:focus { background: rgba(255, 255, 255, 0.6); box-shadow: 0 0 0 1px #000; }
+[data-sync] { overflow-wrap: anywhere; }
+
+@media screen and (max-width: 760px) {
+  .app-layout { flex-direction: column; }
+  .control-panel {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    position: static;
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .preview-area { width: 100%; }
+}
+
+.pdf-export { margin: 0; transition: none; }
+.pdf-export .bill-page { box-shadow: none; transition: none; }
+.pdf-export [contenteditable] { background-color: transparent; box-shadow: none; outline: none; }
+
+@media print {
+  html, body {
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    background: #fff !important;
+    color: #000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+  .no-print, .control-panel { display: none !important; }
+  .app-layout { display: block; min-height: 0; }
+  .preview-area {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    display: block !important;
+    overflow: visible !important;
+  }
+  .print-container {
+    margin: 0 !important;
+    break-inside: avoid;
+    break-after: avoid;
+  }
+  .bill-page {
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    break-inside: avoid;
+  }
+  [contenteditable] { background: transparent !important; box-shadow: none !important; outline: none !important; }
+  @page { size: A4 landscape; margin: 4mm 6mm; }
+}
