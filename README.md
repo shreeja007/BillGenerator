@@ -75,6 +75,16 @@ The shared PDF loader pins html2pdf.js 0.14.0 with SHA-384 verification, loads o
 
 ## Development and verification
 
+### Deploy to Vercel
+
+Import the GitHub repository `shreeja007/BillGenerator` at [Vercel New Project](https://vercel.com/new). Use the repository root (`./`) and the `master` branch. The tracked `vercel.json` selects **Other**, skips dependency installation/build commands, and serves the existing files from the repository root. No environment variables or backend are required.
+
+Click **Deploy** after importing. Subsequent pushes to the connected production branch redeploy the site. To deploy manually through the CLI instead, run `npx vercel` from this directory and use `npx vercel --prod` when ready for the production deployment. The `.vercel/` project-link directory is ignored by Git.
+
+Profiles and drafts belong to the browser origin: the Vercel URL starts with separate local data from an existing `file://` or localhost session.
+
+### Local checks
+
 With Node.js 24 or newer:
 
 ```sh

@@ -1,5 +1,6 @@
 # Installed dependencies
 node_modules/
+.vercel/
 
 # Local environment variables and secrets
 .env
